@@ -1,4 +1,4 @@
-using ObservableCollections;
+﻿using System.Collections;
 
 namespace ObservableCollections.Tests;
 
@@ -30,6 +30,10 @@ public class ToNotifyCollectionChangedTest
         e.MoveNext().Should().BeTrue();
         e.Current.Should().Be("$50");
         e.MoveNext().Should().BeFalse();
+
+        var array = new string[7];
+        ((ICollection)notify).CopyTo(array, 1);
+        array.Should().BeEquivalentTo(new string[] { null, "$10", "$20", "$30", "$40", "$50", null });
     }
 
     [Fact]
@@ -55,5 +59,9 @@ public class ToNotifyCollectionChangedTest
         e.MoveNext().Should().BeTrue();
         e.Current.Should().Be("$4");
         e.MoveNext().Should().BeFalse();
+
+        var array = new string[7];
+        ((ICollection)notify).CopyTo(array, 1);
+        array.Should().BeEquivalentTo(new string[] { null, "$2", "$4", null, null, null, null });
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -168,8 +168,35 @@ namespace ObservableCollections
             Clear();
         }
 
-        void ICollection<TView>.CopyTo(TView[] array, int arrayIndex) => throw new NotSupportedException();
-        void ICollection.CopyTo(Array array, int index) => throw new NotSupportedException();
+        void ICollection<TView>.CopyTo(TView[] array, int arrayIndex)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+
+            lock (this.gate)
+            {
+                foreach (var item in this)
+                {
+                    array[arrayIndex] = item;
+                    arrayIndex++;
+                }
+            }
+        }
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+
+            lock (this.gate)
+            {
+                foreach (var item in this)
+                {
+                    array.SetValue(item, index);
+                    index++;
+                }
+            }
+        }
 
         void IList<TView>.Insert(int index, TView item)
         {
